@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "quiz-question-microservices-api",
+		"name": "Quiz & Question Microservices API",
+		"description": "Collection of all endpoints for Quiz Service, Question Service, and API Gateway.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "gatewayUrl",
+			"value": "http://localhost:8765",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Quiz Service (via Gateway)",
+			"item": [
+				{
+					"name": "Create Quiz",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"categoryName\": \"Java\",\n  \"numQuestions\": 5,\n  \"title\": \"Java Basics Quiz\"\n}"
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}/quiz-service/quiz/create",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["quiz-service", "quiz", "create"]
+						},
+						"description": "Creates a new quiz by asking question-service for question IDs and saving quiz metadata."
+					}
+				},
+				{
+					"name": "Get Quiz Questions (Without Answers)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{gatewayUrl}}/quiz-service/quiz/get/1",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["quiz-service", "quiz", "get", "1"]
+						},
+						"description": "Retrieves questions for a quiz by ID. Answers are omitted for fair gameplay."
+					}
+				},
+				{
+					"name": "Submit Quiz Answers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 1,\n    \"response\": \"Bytecode\"\n  },\n  {\n    \"id\": 2,\n    \"response\": \"Java\"\n  }\n]"
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}/quiz-service/quiz/submit/1",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["quiz-service", "quiz", "submit", "1"]
+						},
+						"description": "Submits player answers and delegates score calculation to question-service."
+					}
+				}
+			]
+		},
+		{
+			"name": "Question Service (via Gateway)",
+			"item": [
+				{
+					"name": "Get All Questions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/allQuestions",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "allQuestions"]
+						},
+						"description": "Fetches all questions present in the Question database."
+					}
+				},
+				{
+					"name": "Get Questions By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/category/Java",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "category", "Java"]
+						},
+						"description": "Fetches questions filtered by category."
+					}
+				},
+				{
+					"name": "Add Question",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"questionTitle\": \"Which company originally created Java?\",\n  \"option1\": \"Sun Microsystems\",\n  \"option2\": \"Microsoft\",\n  \"option3\": \"Google\",\n  \"option4\": \"Oracle\",\n  \"rightAnswer\": \"Sun Microsystems\",\n  \"difficultylevel\": \"Easy\",\n  \"category\": \"Java\"\n}"
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/add",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "add"]
+						},
+						"description": "Adds a new question to the Question database."
+					}
+				},
+				{
+					"name": "Generate Question IDs for Quiz",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/generate?categoryName=Java&numQuestions=5",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "generate"],
+							"query": [
+								{
+									"key": "categoryName",
+									"value": "Java"
+								},
+								{
+									"key": "numQuestions",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Randomly selects question IDs for a quiz based on category and count."
+					}
+				},
+				{
+					"name": "Get Questions From IDs (Internal format)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[1, 2, 3]"
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/getQuestions",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "getQuestions"]
+						},
+						"description": "Takes a list of question IDs and returns question objects without the correct answer."
+					}
+				},
+				{
+					"name": "Calculate Score (Internal format)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 1,\n    \"response\": \"Bytecode\"\n  }\n]"
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}/question-service/question/getScore",
+							"host": ["{{gatewayUrl}}"],
+							"path": ["question-service", "question", "getScore"]
+						},
+						"description": "Validates responses against right answers and computes score."
+					}
+				}
+			]
+		}
+	]
+}

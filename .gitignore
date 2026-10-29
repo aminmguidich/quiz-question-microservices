@@ -1,0 +1,17 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Build artifacts
+**/target/
+*.log
+
+# Maven wrapper
+!.mvn/wrapper/maven-wrapper.jar
